@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../core/errors/failures.dart';
 import '../../domain/entities/todo.dart';
 import '../../domain/usecases/get_all_todos.dart';
@@ -6,6 +7,8 @@ import '../../domain/usecases/create_todo.dart';
 import '../../domain/repositories/todo_repository.dart';
 import '../../data/repositories/todo_repository_impl.dart';
 import '../../data/datasources/todo_local_datasource.dart';
+
+part 'todo_provider.freezed.dart';
 
 /// Estado de la lista de tareas
 @freezed
