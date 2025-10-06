@@ -1,11 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/task.dart';
-import '../../domain/usecases/get_tasks.dart';
-import '../../domain/usecases/add_task.dart';
-import '../../domain/usecases/update_task.dart';
-import '../../domain/usecases/delete_task.dart';
-import '../../core/errors/failures.dart';
-import '../../core/usecases/usecase.dart';
 
 /// Estado de la lista de tareas
 class TaskListState {
@@ -30,7 +24,11 @@ class TaskListState {
 
   /// Crear estado con tareas
   TaskListState withTasks(List<Task> newTasks) {
-    return TaskListState(isLoading: false, tasks: newTasks, error: null);
+    return TaskListState(
+      isLoading: false,
+      tasks: newTasks,
+      error: null,
+    );
   }
 
   /// Crear estado con error
@@ -73,7 +71,11 @@ class TaskListState {
 
   /// Crear estado con error limpiado
   TaskListState clearError() {
-    return TaskListState(isLoading: isLoading, tasks: tasks, error: null);
+    return TaskListState(
+      isLoading: isLoading,
+      tasks: tasks,
+      error: null,
+    );
   }
 
   /// Verificar si hay tareas
@@ -147,50 +149,86 @@ class TaskListStats {
 
 /// Notifier para manejar el estado de la lista de tareas
 class TaskListNotifier extends StateNotifier<TaskListState> {
-  final GetTasks _getTasks;
-  final AddTask _addTask;
-  final UpdateTask _updateTask;
-  final DeleteTask _deleteTask;
+  TaskListNotifier() : super(const TaskListState()) {
+    _loadInitialTasks();
+  }
 
-  TaskListNotifier({
-    required GetTasks getTasks,
-    required AddTask addTask,
-    required UpdateTask updateTask,
-    required DeleteTask deleteTask,
-  }) : _getTasks = getTasks,
-       _addTask = addTask,
-       _updateTask = updateTask,
-       _deleteTask = deleteTask,
-       super(const TaskListState());
+  /// Cargar tareas iniciales de demostración
+  void _loadInitialTasks() {
+    final initialTasks = [
+      Task(
+        id: 1,
+        title: 'Implementar TaskListScreen',
+        isCompleted: false,
+        createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+      ),
+      Task(
+        id: 2,
+        title: 'Configurar Riverpod providers',
+        isCompleted: true,
+        createdAt: DateTime.now().subtract(const Duration(hours: 1)),
+        updatedAt: DateTime.now().subtract(const Duration(minutes: 30)),
+      ),
+      Task(
+        id: 3,
+        title: 'Crear widgets con Material 3',
+        isCompleted: false,
+        createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
+      ),
+      Task(
+        id: 4,
+        title: 'Implementar funcionalidad de eliminar',
+        isCompleted: false,
+        createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
+      ),
+      Task(
+        id: 5,
+        title: 'Agregar validaciones de entrada',
+        isCompleted: false,
+        createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
+      ),
+    ];
 
-  /// Cargar todas las tareas
+    state = state.withTasks(initialTasks);
+  }
+
+  /// Cargar todas las tareas (simulado)
   Future<void> loadTasks() async {
     try {
       state = state.loading();
-
-      final tasks = await _getTasks(const NoParams());
-      state = state.withTasks(tasks);
-    } on Failure catch (failure) {
-      state = state.withError(_getErrorMessage(failure));
+      
+      // Simular delay de red
+      await Future.delayed(const Duration(milliseconds: 800));
+      
+      _loadInitialTasks();
     } catch (e) {
-      state = state.withError('Error inesperado al cargar tareas: $e');
+      state = state.withError('Error al cargar tareas: $e');
     }
   }
 
   /// Agregar nueva tarea
-  Future<void> addTask(Task task) async {
+  Future<void> addTask(String title) async {
+    if (title.trim().isEmpty) {
+      state = state.withError('El título de la tarea no puede estar vacío');
+      return;
+    }
+
     try {
       state = state.loading();
-
-      final addTaskParams = AddTaskParams.fromTask(task);
-      await _addTask(addTaskParams);
-
-      // Recargar tareas para obtener el ID generado
-      await loadTasks();
-    } on Failure catch (failure) {
-      state = state.withError(_getErrorMessage(failure));
+      
+      // Simular delay de red
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      final newTask = Task(
+        id: DateTime.now().millisecondsSinceEpoch,
+        title: title.trim(),
+        isCompleted: false,
+        createdAt: DateTime.now(),
+      );
+      
+      state = state.withTaskAdded(newTask);
     } catch (e) {
-      state = state.withError('Error inesperado al agregar tarea: $e');
+      state = state.withError('Error al agregar tarea: $e');
     }
   }
 
@@ -198,16 +236,13 @@ class TaskListNotifier extends StateNotifier<TaskListState> {
   Future<void> updateTask(Task task) async {
     try {
       state = state.loading();
-
-      final updateParams = UpdateTaskParams.fromTask(task);
-      await _updateTask(updateParams);
-
-      // Actualizar estado local
+      
+      // Simular delay de red
+      await Future.delayed(const Duration(milliseconds: 300));
+      
       state = state.withTaskUpdated(task);
-    } on Failure catch (failure) {
-      state = state.withError(_getErrorMessage(failure));
     } catch (e) {
-      state = state.withError('Error inesperado al actualizar tarea: $e');
+      state = state.withError('Error al actualizar tarea: $e');
     }
   }
 
@@ -215,16 +250,13 @@ class TaskListNotifier extends StateNotifier<TaskListState> {
   Future<void> deleteTask(int taskId) async {
     try {
       state = state.loading();
-
-      final deleteParams = DeleteTaskParams(id: taskId);
-      await _deleteTask(deleteParams);
-
-      // Actualizar estado local
+      
+      // Simular delay de red
+      await Future.delayed(const Duration(milliseconds: 300));
+      
       state = state.withTaskDeleted(taskId);
-    } on Failure catch (failure) {
-      state = state.withError(_getErrorMessage(failure));
     } catch (e) {
-      state = state.withError('Error inesperado al eliminar tarea: $e');
+      state = state.withError('Error al eliminar tarea: $e');
     }
   }
 
@@ -232,18 +264,16 @@ class TaskListNotifier extends StateNotifier<TaskListState> {
   Future<void> markTaskAsCompleted(int taskId) async {
     try {
       state = state.loading();
-
-      final updateParams = UpdateTaskParams.markAsCompleted(taskId);
-      await _updateTask(updateParams);
-
-      // Recargar tareas para obtener el estado actualizado
-      await loadTasks();
-    } on Failure catch (failure) {
-      state = state.withError(_getErrorMessage(failure));
+      
+      // Simular delay de red
+      await Future.delayed(const Duration(milliseconds: 200));
+      
+      final task = state.tasks.firstWhere((task) => task.id == taskId);
+      final updatedTask = task.markAsCompleted();
+      
+      state = state.withTaskUpdated(updatedTask);
     } catch (e) {
-      state = state.withError(
-        'Error inesperado al marcar tarea como completada: $e',
-      );
+      state = state.withError('Error al marcar tarea como completada: $e');
     }
   }
 
@@ -251,35 +281,38 @@ class TaskListNotifier extends StateNotifier<TaskListState> {
   Future<void> markTaskAsPending(int taskId) async {
     try {
       state = state.loading();
-
-      final updateParams = UpdateTaskParams.markAsPending(taskId);
-      await _updateTask(updateParams);
-
-      // Recargar tareas para obtener el estado actualizado
-      await loadTasks();
-    } on Failure catch (failure) {
-      state = state.withError(_getErrorMessage(failure));
+      
+      // Simular delay de red
+      await Future.delayed(const Duration(milliseconds: 200));
+      
+      final task = state.tasks.firstWhere((task) => task.id == taskId);
+      final updatedTask = task.markAsPending();
+      
+      state = state.withTaskUpdated(updatedTask);
     } catch (e) {
-      state = state.withError(
-        'Error inesperado al marcar tarea como pendiente: $e',
-      );
+      state = state.withError('Error al marcar tarea como pendiente: $e');
     }
   }
 
   /// Actualizar título de tarea
   Future<void> updateTaskTitle(int taskId, String newTitle) async {
+    if (newTitle.trim().isEmpty) {
+      state = state.withError('El título de la tarea no puede estar vacío');
+      return;
+    }
+
     try {
       state = state.loading();
-
-      final updateParams = UpdateTaskParams.updateTitle(taskId, newTitle);
-      await _updateTask(updateParams);
-
-      // Recargar tareas para obtener el título actualizado
-      await loadTasks();
-    } on Failure catch (failure) {
-      state = state.withError(_getErrorMessage(failure));
+      
+      // Simular delay de red
+      await Future.delayed(const Duration(milliseconds: 300));
+      
+      final task = state.tasks.firstWhere((task) => task.id == taskId);
+      final updatedTask = task.updateTitle(newTitle.trim());
+      
+      state = state.withTaskUpdated(updatedTask);
     } catch (e) {
-      state = state.withError('Error inesperado al actualizar título: $e');
+      state = state.withError('Error al actualizar título: $e');
     }
   }
 
@@ -292,27 +325,13 @@ class TaskListNotifier extends StateNotifier<TaskListState> {
   Future<void> refresh() async {
     await loadTasks();
   }
-
-  /// Obtener mensaje de error legible
-  String _getErrorMessage(Failure failure) {
-    return failure.when(
-      serverFailure: (message, statusCode) => 'Error del servidor: $message',
-      cacheFailure: (message) => 'Error de caché: $message',
-      networkFailure: (message) => 'Error de conexión: $message',
-      validationFailure: (message, fieldErrors) =>
-          'Error de validación: $message',
-      unknownFailure: (message) => 'Error desconocido: $message',
-    );
-  }
 }
 
 /// Provider para el TaskListNotifier
 final taskListNotifierProvider =
     StateNotifierProvider<TaskListNotifier, TaskListState>((ref) {
-      // Aquí necesitarías inyectar los use cases
-      // Por ahora, se crean instancias vacías para evitar errores de compilación
-      throw UnimplementedError('Los use cases deben ser inyectados aquí');
-    });
+  return TaskListNotifier();
+});
 
 /// Provider para obtener solo las tareas
 final tasksProvider = Provider<List<Task>>((ref) {
