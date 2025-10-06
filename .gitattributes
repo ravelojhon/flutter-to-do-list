@@ -1,0 +1,106 @@
+# Configuración de Git para Flutter
+
+# Archivos de texto
+*.dart text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+
+# Archivos de configuración
+.gitignore text eol=lf
+.gitattributes text eol=lf
+analysis_options.yaml text eol=lf
+pubspec.yaml text eol=lf
+pubspec.lock text eol=lf
+
+# Archivos de Flutter
+*.dart text eol=lf
+*.g.dart text eol=lf
+*.freezed.dart text eol=lf
+*.mocks.dart text eol=lf
+
+# Archivos de Android
+*.gradle text eol=lf
+*.properties text eol=lf
+*.xml text eol=lf
+*.kt text eol=lf
+*.java text eol=lf
+
+# Archivos de iOS
+*.swift text eol=lf
+*.plist text eol=lf
+*.xcconfig text eol=lf
+*.pbxproj text eol=lf
+
+# Archivos de configuración de IDE
+*.iml text eol=lf
+*.ipr text eol=lf
+*.iws text eol=lf
+
+# Archivos binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.icns binary
+*.jar binary
+*.aar binary
+*.apk binary
+*.ipa binary
+*.app binary
+*.dmg binary
+*.exe binary
+*.msi binary
+*.deb binary
+*.rpm binary
+*.zip binary
+*.tar.gz binary
+*.7z binary
+*.rar binary
+
+# Archivos de Flutter específicos
+**/ios/Flutter/Flutter.framework binary
+**/ios/Flutter/Flutter.podspec binary
+**/ios/Flutter/App.framework binary
+**/ios/Flutter/Generated.xcconfig binary
+**/ios/Flutter/flutter_export_environment.sh text eol=lf
+
+# Archivos de build
+**/build/** binary
+**/android/app/build/** binary
+**/ios/build/** binary
+**/macos/build/** binary
+**/windows/build/** binary
+**/linux/build/** binary
+**/web/build/** binary
+
+# Archivos de dependencias
+**/pubspec.lock text eol=lf
+**/.packages text eol=lf
+**/.flutter-plugins text eol=lf
+**/.flutter-plugins-dependencies text eol=lf
+
+# Archivos de configuración de Git
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.gitmodules text eol=lf
+
+# Archivos de documentación
+README.md text eol=lf
+CHANGELOG.md text eol=lf
+LICENSE text eol=lf
+CONTRIBUTING.md text eol=lf
+
+# Archivos de CI/CD
+.github/** text eol=lf
+.gitlab-ci.yml text eol=lf
+.travis.yml text eol=lf
+.circleci/** text eol=lf
+azure-pipelines.yml text eol=lf
+
+# Archivos de configuración de pre-commit
+.pre-commit-config.yaml text eol=lf
+.pre-commit-hooks.yaml text eol=lf

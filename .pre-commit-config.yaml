@@ -1,0 +1,48 @@
+# Pre-commit hooks para Flutter
+# Instalar con: pip install pre-commit && pre-commit install
+
+repos:
+  # Hooks generales
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-json
+      - id: pretty-format-json
+        args: ['--autofix']
+
+  # Hooks específicos de Dart/Flutter
+  - repo: https://github.com/dart-lang/dart_style
+    rev: 2.3.2
+    hooks:
+      - id: dart-format
+        files: \.dart$
+        args: [--set-exit-if-changed]
+
+  # Análisis de código Dart
+  - repo: local
+    hooks:
+      - id: flutter-analyze
+        name: Flutter Analyze
+        entry: flutter analyze
+        language: system
+        files: \.dart$
+        pass_filenames: false
+
+      - id: flutter-test
+        name: Flutter Test
+        entry: flutter test
+        language: system
+        files: \.dart$
+        pass_filenames: false
+
+      - id: flutter-format-check
+        name: Flutter Format Check
+        entry: flutter format --set-exit-if-changed
+        language: system
+        files: \.dart$
+        pass_filenames: false
